@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.robotcontroller;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,8 +6,9 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
+import org.firstinspires.ftc.robotcontroller.Subsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcontroller.Mouse;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
 public class peripherals extends Subsystem {
 

@@ -1,25 +1,18 @@
-package org.firstinspires.ftc.robotcontroller;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import com.acmerobotics.dashboard.FtcDashboard;
+package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
+
+import org.firstinspires.ftc.teamcode.Tools.PID;
 
 @Autonomous
 public class soccerGuyAuto extends LinearOpMode {
     DcMotor leftMotor;
     DcMotor rightMotor;
-
-    private FtcDashboard dashboard;
     public SparkFunOTOS Otos;
-    private HardwareDevice SparkFunOTOS;
-
-
+    public HardwareDevice SparkFunOTOS;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -37,8 +30,6 @@ public class soccerGuyAuto extends LinearOpMode {
         leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        dashboard = FtcDashboard.getInstance();
-
         SparkFunOTOS = hardwareMap.get("Otos");
         Otos.initialize();
         double otos = Otos.getAngularScalar();
@@ -47,8 +38,6 @@ public class soccerGuyAuto extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
-
 
             double leftPosRaw = leftMotor.getCurrentPosition();
             double rightPosRaw = rightMotor.getCurrentPosition();
@@ -62,8 +51,8 @@ public class soccerGuyAuto extends LinearOpMode {
             double correctionGain = 0.0002;
             double correction = correctionGain * (leftPos - rightPos);
 
-            double leftPower = 0;//basePower - correction;
-            double rightPower =0;// basePower + correction;
+            double leftPower = basePower - correction;
+            double rightPower = basePower + correction;
 
             if (Math.abs(target - avgPos) < tolerance) {
                 leftMotor.setPower(0.5);
