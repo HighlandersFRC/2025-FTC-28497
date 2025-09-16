@@ -59,10 +59,10 @@ public class AprilTagFollowing extends LinearOpMode {
 
                 double targetYaw = botpose.getOrientation().getYaw();
 
-                // Use yaw only for rotation correction
+
                 double rotate = -targetYaw * 0.01;
 
-                // Set motor powers for pure rotation (spin in place)
+
                 frontLeftMotor.setPower(rotate);
                 backLeftMotor.setPower(rotate);
                 frontRightMotor.setPower(-rotate);
