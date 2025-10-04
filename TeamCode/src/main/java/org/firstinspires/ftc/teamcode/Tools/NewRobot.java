@@ -14,11 +14,11 @@ public class NewRobot {
 
     // Instance variables for subsystems
     public Drive drive;
-    public Superstructure superstructure;
+    ;
 
     public NewRobot(HardwareMap hardwareMap) {
         this.drive = new Drive("drive", hardwareMap);
-       this.superstructure = new Superstructure("superstructure");
+
 
     }
 
@@ -29,7 +29,7 @@ public class NewRobot {
     // Initialize hardware for all subsystems
     public void initialize(HardwareMap hardwareMap, Telemetry telemetry) {
         this.drive = new Drive("drive", hardwareMap);
-        this.superstructure = new Superstructure("superstructure");
+
 
     }
 

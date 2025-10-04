@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Tools.Vector;
 public class Drive extends Subsystem {
 
     private Drive.Drive_State wantedSuperState= Drive_State.IDLE;
-    private Drive.Drive_State CurrentSuperState= Drive_State.IDLE;
+    private Drive.Drive_State currentSuperState= Drive_State.IDLE;
 
     private DcMotorEx frontLeftMotor;
     private DcMotorEx backLeftMotor;
@@ -108,7 +108,6 @@ public class Drive extends Subsystem {
 //        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-
     public void teleopDrive(Gamepad gamepad1) {
         double x = -gamepad1.left_stick_x*2;
         double y = -gamepad1.left_stick_y;
@@ -127,6 +126,15 @@ public class Drive extends Subsystem {
 
     public  void stop() {
         drive(0,0,0,0);
+
+        backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+    }
+
+    public void BRAKE() {
 
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -215,7 +223,6 @@ public class Drive extends Subsystem {
         return backLeftMotor.getCurrentPosition();
     }
 
-
     public  int getCenterEncoder() {
         return frontRightMotor.getCurrentPosition();
     }
@@ -234,12 +241,50 @@ public class Drive extends Subsystem {
 
         robotVector = robotVector.normalize();
 
-        double frontLeftPower = (-rotY + rotX );
-        double backLeftPower = (-rotY - rotX );
-        double frontRightPower = (-rotY - rotX );
-        double backRightPower = (rotY - rotX );
+        double vrx = vtheta/(Math.PI/2);
 
+        double frontLeftPower = (-rotY + rotX +vrx);
+        double backLeftPower = (-rotY - rotX + vrx);
+        double frontRightPower = (-rotY - rotX - vrx);
+        double backRightPower = (rotY - rotX + vrx);
 
+        frontLeftMotor.setPower(-frontLeftPower);
+        backLeftMotor.setPower(-backLeftPower);
+        frontRightMotor.setPower(-frontRightPower);
+        backRightMotor.setPower(-backRightPower);
+
+    }
+
+    protected Drive_State handleStateTransitions(){
+        switch (wantedSuperState) {
+            case DEFAULT:
+                currentSuperState = Drive_State.DEFAULT;
+                break;
+            case IDLE:
+                currentSuperState = Drive_State.IDLE;
+                break;
+        }
+        return currentSuperState;
+    }
+
+    private void handleDefaultState(){
+        BRAKE();
+    }
+    private void handleIdleState() {
+        BRAKE();
+    }
+
+    @Override
+    public void periodic() {
+        handleStateTransitions();
+        switch (currentSuperState) {
+            case DEFAULT:
+                handleDefaultState();
+                break;
+            case IDLE:
+                handleIdleState();
+                break;
+        }
     }
 
     @Override
@@ -249,6 +294,6 @@ public class Drive extends Subsystem {
 
     @Override
     public Command getDefaultCommand() {
-        return new DriveDefault(this); // Retrieve the set default command
+        return new DriveDefault(this);
     }
 }
