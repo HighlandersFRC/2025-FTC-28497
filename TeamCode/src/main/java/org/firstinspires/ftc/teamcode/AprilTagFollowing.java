@@ -7,36 +7,33 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-
 import java.util.List;
 
 @TeleOp
 public class AprilTagFollowing extends LinearOpMode {
 
     private Limelight3A limelight;
+    private double lastTx = 0; // for smoothing
 
     @Override
     public void runOpMode() throws InterruptedException {
 
-        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("frontleft");
-        DcMotor backLeftMotor = hardwareMap.dcMotor.get("backleft");
-        DcMotor frontRightMotor = hardwareMap.dcMotor.get("frontright");
-        DcMotor backRightMotor = hardwareMap.dcMotor.get("backright");
+        DcMotor frontLeftMotor = hardwareMap.dcMotor.get("left_front");
+        DcMotor backLeftMotor = hardwareMap.dcMotor.get("left_back");
+        DcMotor frontRightMotor = hardwareMap.dcMotor.get("right_front");
+        DcMotor backRightMotor = hardwareMap.dcMotor.get("right_back");
 
-        frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotorSimple.Direction.FORWARD);
-
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0);
         limelight.start();
 
         telemetry.setMsTransmissionInterval(50);
-        telemetry.addData("", "Robot Ready. Press Play.");
+        telemetry.addLine("Robot Ready. Press PLAY.");
         telemetry.update();
 
         waitForStart();
@@ -48,30 +45,60 @@ public class AprilTagFollowing extends LinearOpMode {
 
             if (gamepad1.x) {
                 autoMode = !autoMode;
+                sleep(300);
             }
 
             LLResult result = limelight.getLatestResult();
             boolean hasValidPose = result.isValid() && result.getBotpose() != null;
 
-
             if (autoMode && hasValidPose) {
                 Pose3D botpose = result.getBotpose();
 
-                double targetYaw = botpose.getOrientation().getYaw();
+                double x = botpose.getPosition().x;
+                double z = botpose.getPosition().z;
+                double tx = result.getTx();
+
+                double smoothTx = 0.7 * lastTx + 0.3 * tx;
+                lastTx = smoothTx;
+
+                double desiredDistance = 0.2; // meters
+                double forwardPower = (z - desiredDistance) * -0.15;
+                double strafePower = x * -0.15;
+                double turnPower = smoothTx * -0.007;
+
+                if (Math.abs(smoothTx) < 1.5) {
+                    turnPower = 0;
+                }
+
+                if (z < 0.4) {
+                    forwardPower *= 0.5;
+                    turnPower *= 0.5;
+                }
 
 
-                double rotate = -targetYaw * 0.01;
+                forwardPower = Math.max(-0.4, Math.min(0.4, forwardPower));
+                strafePower = Math.max(-0.4, Math.min(0.4, strafePower));
+                turnPower = Math.max(-0.3, Math.min(0.3, turnPower));
 
+                double denominator = Math.max(Math.abs(forwardPower) + Math.abs(strafePower) + Math.abs(turnPower), 1);
+                double fl = (forwardPower + strafePower + turnPower) / denominator;
+                double bl = (forwardPower - strafePower + turnPower) / denominator;
+                double fr = (forwardPower - strafePower - turnPower) / denominator;
+                double br = (forwardPower + strafePower - turnPower) / denominator;
 
-                frontLeftMotor.setPower(rotate);
-                backLeftMotor.setPower(rotate);
-                frontRightMotor.setPower(-rotate);
-                backRightMotor.setPower(-rotate);
+                frontLeftMotor.setPower(-fl);
+                backLeftMotor.setPower(-bl);
+                frontRightMotor.setPower(-fr);
+                backRightMotor.setPower(-br);
 
-                telemetry.addData("Mode", "Auto Follow");
+                telemetry.addData("Mode", "AUTO - Tag Detected");
+                telemetry.addData("TX (deg)", "%.2f", tx);
+                telemetry.addData("Forward", "%.2f", forwardPower);
+                telemetry.addData("Strafe", "%.2f", strafePower);
+                telemetry.addData("Turn", "%.2f", turnPower);
 
             } else if (!autoMode) {
-
+                // Manual control
                 double y = gamepad1.left_stick_y;
                 double x = -gamepad1.left_stick_x * 1.1;
                 double rx = -gamepad1.right_stick_x;
@@ -82,48 +109,47 @@ public class AprilTagFollowing extends LinearOpMode {
                 double fr = (y - x - rx) / denominator;
                 double br = (y + x - rx) / denominator;
 
-                frontLeftMotor.setPower(fl);
-                backLeftMotor.setPower(bl);
-                frontRightMotor.setPower(fr);
-                backRightMotor.setPower(br);
+                frontLeftMotor.setPower(-fl);
+                backLeftMotor.setPower(-bl);
+                frontRightMotor.setPower(-fr);
+                backRightMotor.setPower(-br);
 
-                telemetry.addData("Mode", "Manual");
+                telemetry.addData("Mode", "MANUAL");
+
             } else {
-
+                // Auto mode, but no tag detected
                 frontLeftMotor.setPower(0);
                 backLeftMotor.setPower(0);
                 frontRightMotor.setPower(0);
                 backRightMotor.setPower(0);
-                telemetry.addData("Mode", "Auto Follow - No Target");
+                telemetry.addData("Mode", "AUTO - No Tag");
             }
 
-
+            // --- Clean yaw output ---
             if (hasValidPose) {
                 Pose3D botpose = result.getBotpose();
-                double x = botpose.getPosition().x;
-                double y = botpose.getPosition().y;
-                double z = botpose.getPosition().z;
-                double roll = botpose.getOrientation().getRoll();
-                double pitch = botpose.getOrientation().getPitch();
-                double yaw = botpose.getOrientation().getYaw();
 
-                telemetry.addData("BotPose",
-                        "X: %.2f m, Y: %.2f m, Z: %.2f m",
-                        x, y, z);
-                telemetry.addData("Orientation",
-                        "Roll: %.1f°, Pitch: %.1f°, Yaw: %.1f°",
-                        Math.toDegrees(roll),
-                        Math.toDegrees(pitch),
-                        Math.toDegrees(yaw));
+                double bx = botpose.getPosition().x;
+                double by = botpose.getPosition().y;
+                double bz = botpose.getPosition().z;
 
-                List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
-                for (LLResultTypes.FiducialResult fr : fiducials) {
-                    telemetry.addData("April Tag", "ID: %d, Family: %s",
-                            fr.getFiducialId(),
-                            fr.getFamily());
+                // Normalize yaw to [-180, 180]
+                double rawYaw = botpose.getOrientation().getYaw();
+                double yawDeg = Math.toDegrees(rawYaw);
+                yawDeg = ((yawDeg + 180) % 360 + 360) % 360 - 180;
+
+                double roll = Math.toDegrees(botpose.getOrientation().getRoll());
+                double pitch = Math.toDegrees(botpose.getOrientation().getPitch());
+
+                telemetry.addData("BotPose", "X: %.2f, Y: %.2f, Z: %.2f", bx, by, bz);
+                telemetry.addData("Orientation", "Roll: %.1f°, Pitch: %.1f°, Yaw: %.1f°", roll, pitch, yawDeg);
+
+                List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
+                for (LLResultTypes.FiducialResult tag : tags) {
+                    telemetry.addData("Tag", "ID: %d, Family: %s", tag.getFiducialId(), tag.getFamily());
                 }
             } else {
-                telemetry.addData("Limelight", "No valid data");
+                telemetry.addData("Limelight", "No valid pose");
             }
 
             telemetry.update();
@@ -132,3 +158,5 @@ public class AprilTagFollowing extends LinearOpMode {
         limelight.stop();
     }
 }
+
+
