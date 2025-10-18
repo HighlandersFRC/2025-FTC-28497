@@ -24,8 +24,6 @@ public class AprilTagFollowing extends LinearOpMode {
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("right_front");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("right_back");
 
-
-
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -61,24 +59,28 @@ public class AprilTagFollowing extends LinearOpMode {
                 double smoothTx = 0.7 * lastTx + 0.3 * tx;
                 lastTx = smoothTx;
 
-                double desiredDistance = 0.2; // meters
-                double forwardPower = (z - desiredDistance) * -0.15;
-                double strafePower = x * -0.15;
-                double turnPower = smoothTx * -0.007;
+                double desiredDistance = 0.2;
 
-                if (Math.abs(smoothTx) < 1.5) {
-                    turnPower = 0;
-                }
 
+                double forwardK = -0.45;
+                double strafeK  = -0.25;
+                double turnK    = -0.02;
+
+                double forwardPower = (z - desiredDistance) * forwardK;
+                double strafePower  = x * strafeK;
+                double turnPower    = smoothTx * turnK;
+
+                if (Math.abs(smoothTx) < 1.5) turnPower = 0;
                 if (z < 0.4) {
                     forwardPower *= 0.5;
                     turnPower *= 0.5;
                 }
 
 
-                forwardPower = Math.max(-0.4, Math.min(0.4, forwardPower));
-                strafePower = Math.max(-0.4, Math.min(0.4, strafePower));
-                turnPower = Math.max(-0.3, Math.min(0.3, turnPower));
+                forwardPower = Math.max(-0.5, Math.min(0.5, forwardPower));
+                strafePower  = Math.max(-0.5, Math.min(0.5, strafePower));
+                turnPower    = Math.max(-0.4, Math.min(0.4, turnPower));
+
 
                 double denominator = Math.max(Math.abs(forwardPower) + Math.abs(strafePower) + Math.abs(turnPower), 1);
                 double fl = (forwardPower + strafePower + turnPower) / denominator;
@@ -125,7 +127,7 @@ public class AprilTagFollowing extends LinearOpMode {
                 telemetry.addData("Mode", "AUTO - No Tag");
             }
 
-            // --- Clean yaw output ---
+            // --- Orientation + Tag info ---
             if (hasValidPose) {
                 Pose3D botpose = result.getBotpose();
 
@@ -133,7 +135,6 @@ public class AprilTagFollowing extends LinearOpMode {
                 double by = botpose.getPosition().y;
                 double bz = botpose.getPosition().z;
 
-                // Normalize yaw to [-180, 180]
                 double rawYaw = botpose.getOrientation().getYaw();
                 double yawDeg = Math.toDegrees(rawYaw);
                 yawDeg = ((yawDeg + 180) % 360 + 360) % 360 - 180;
@@ -158,5 +159,3 @@ public class AprilTagFollowing extends LinearOpMode {
         limelight.stop();
     }
 }
-
-
