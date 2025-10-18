@@ -7,8 +7,12 @@ public class Mouse {
     private static double fieldX;
     private static double fieldY;
     private static double theta;
+    private static double accelX;
+    private static double accelY;
+    private static double accelTheta;
     private static SparkFunOTOS mouse;
     private static SparkFunOTOS.Pose2D field;
+    private static SparkFunOTOS.Pose2D accel;
 
     private static long lastUpdateTime = 0;
     private static final long UPDATE_INTERVAL_MS = 20; // 50Hz max
@@ -28,12 +32,13 @@ public class Mouse {
         try {
             mouse.setLinearUnit(SparkFunOTOS.LinearUnit.METERS);
             mouse.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
-            SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.15875, 0, -270);
+            SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(-0.15875, 0, 90);//0
             mouse.setOffset(offset);
             mouse.setLinearScalar(1.005809562240364);
             mouse.setAngularScalar(0.989932511851);
             mouse.calibrateImu();
             mouse.resetTracking();
+
             System.out.println("OTOS configured");
         } catch (Exception e) {
             System.out.println("Failed to configure OTOS: " + e.getMessage());
@@ -60,9 +65,16 @@ public class Mouse {
 
         try {
             field = mouse.getPosition();
+            accel = mouse.getAcceleration();
+
+            accelX = accel.x;
+            accelY = accel.y;
+            accelTheta = accel.h;
+
             fieldX = field.x;
             fieldY = field.y;
             theta = field.h;
+
         } catch (Exception e) {
             // log error but don’t crash
             System.out.println("Mouse update failed: " + e.getMessage());
@@ -81,5 +93,16 @@ public class Mouse {
 
     public static double getTheta() {
         return theta;
+    }
+
+    public static double getAccelX(){
+        return  accelX;
+    }
+    public static double getAccelY(){
+        return  accelY;
+    }
+
+    public static double getAccelTheta(){
+        return accelTheta;
     }
 }
