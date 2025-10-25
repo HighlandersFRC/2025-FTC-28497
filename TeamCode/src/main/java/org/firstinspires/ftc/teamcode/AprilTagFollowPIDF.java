@@ -11,13 +11,13 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import java.util.List;
 
 @TeleOp
-public class AprilTagFollowing extends LinearOpMode {
+public class AprilTagFollowPIDF extends LinearOpMode {
 
     private Limelight3A limelight;
     private double lastTx = 0;
 
 
-    private final PID forwardPID = new PID(.0, 0.0, 0.00);
+    private final PID forwardPID = new PID(.025, 0.0, 0.001);
     private final PID strafePID  = new PID(0.0, 0.0, 0.0);
     private final PID turnPID    = new PID(0.045, 0.0, 0.030);
 

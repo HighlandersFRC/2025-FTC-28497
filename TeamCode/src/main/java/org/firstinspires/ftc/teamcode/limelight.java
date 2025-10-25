@@ -20,7 +20,7 @@ public class limelight extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-        telemetry.setMsTransmissionInterval(50);
+        telemetry.setMsTransmissionInterval(1);
 
         limelight.pipelineSwitch(0);
         limelight.start();
@@ -59,13 +59,14 @@ public class limelight extends LinearOpMode {
                         Math.toDegrees(pitch),
                         Math.toDegrees(yaw));
 
-
                 List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
                 for (LLResultTypes.FiducialResult fr : fiducialResults) {
                     telemetry.addData("April Tag",
                             "ID: %d, Family: %s, ",
                             fr.getFiducialId(),
                             fr.getFamily());
+
+                    telemetry.addData("Limelight int",status);
                 }
             } else {
                 telemetry.addData("Limelight", "No data available");
