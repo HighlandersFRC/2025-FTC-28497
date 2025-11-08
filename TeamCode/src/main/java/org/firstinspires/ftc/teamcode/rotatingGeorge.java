@@ -53,7 +53,7 @@ public class rotatingGeorge extends LinearOpMode {
             drivePID.updatePID(leftBack.getCurrentPosition());
             drivePID.updatePID(rightBack.getCurrentPosition());
 
-            leftFront.setPower(-target);
+            leftFront.setPower(target);
             rightFront.setPower(target);
             leftBack.setPower(target);
             rightBack.setPower(target);
