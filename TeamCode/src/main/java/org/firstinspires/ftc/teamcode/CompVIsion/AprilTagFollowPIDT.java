@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.CompVIsion;
 
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -8,18 +8,20 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.Tools.PID;
+
 import java.util.List;
 
 @TeleOp
-public class AprilTagFollowing extends LinearOpMode {
+public class AprilTagFollowPIDT extends LinearOpMode {
 
     private Limelight3A limelight;
     private double lastTx = 0;
 
 
-    private final PID forwardPID = new PID(.0, 0.0, 0.00);
+    private final PID forwardPID = new PID(.0, 0.0, 0.0);
     private final PID strafePID  = new PID(0.0, 0.0, 0.0);
-    private final PID turnPID    = new PID(0.045, 0.0, 0.030);
+    private final PID turnPID    = new PID(0.085, 0.0, 0.1);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,13 +67,18 @@ public class AprilTagFollowing extends LinearOpMode {
             if (autoMode && hasValidPose) {
                 Pose3D botpose = result.getBotpose();
 
+
+
                 double x = botpose.getPosition().x;
                 double z = botpose.getPosition().z;
                 double tx = result.getTx();
 
 
+
+
                 double smoothTx = 0.3 * lastTx + 0.7 * tx;
                 lastTx = smoothTx;
+
 
 
                 double forwardPower = -forwardPID.updatePID(z);
