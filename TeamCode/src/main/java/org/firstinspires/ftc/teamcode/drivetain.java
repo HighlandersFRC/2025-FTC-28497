@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.CompVIsion;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Shoot;
-
+;
 @TeleOp
 public class drivetain extends LinearOpMode {
 
@@ -30,16 +30,22 @@ public class drivetain extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            double drive = -gamepad1.left_stick_y;
+
+            double drive = gamepad1.left_stick_y;
+
             double turn = gamepad1.right_stick_x;
 
             double leftPower = drive + turn;
             double rightPower = drive - turn;
 
             double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
+
             if (max > 1.0) {
+
                 leftPower /= max;
+
                 rightPower /= max;
+
             }
 
             if (gamepad1.a) {
@@ -50,7 +56,10 @@ public class drivetain extends LinearOpMode {
 
                 shooter.throwBall(-1.0);
 
-                shooter.throwBall(0.0);
+            }
+            else{
+                shooter.throwBall(0.0
+                );
             }
 
             leftDrive.setPower(leftPower);
