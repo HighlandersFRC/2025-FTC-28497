@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
-
 @Autonomous
 public class rotatingGeorge extends LinearOpMode {
     DcMotor leftFront;
@@ -26,10 +25,11 @@ public class rotatingGeorge extends LinearOpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        PID drivePID = new PID(0.5,0,0);
-        double target= 9257;
+        PID drivePID = new PID(0.1,0,0);
+
+        double target = 90;
         drivePID.setSetPoint(target);
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -43,27 +43,23 @@ public class rotatingGeorge extends LinearOpMode {
 
         waitForStart();
         while (opModeIsActive()) {
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            double yaw = orientation.getYaw(AngleUnit.DEGREES);
-            double pitch = orientation.getPitch(AngleUnit.DEGREES);
-            double roll = orientation.getRoll(AngleUnit.DEGREES);
 
-            drivePID.updatePID(leftFront.getCurrentPosition());
-            drivePID.updatePID(rightFront.getCurrentPosition());
-            drivePID.updatePID(leftBack.getCurrentPosition());
-            drivePID.updatePID(rightBack.getCurrentPosition());
+            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double error = target - yaw;
+            double result = drivePID.updatePID(yaw);
 
-            leftFront.setPower(-target);
-            rightFront.setPower(target);
-            leftBack.setPower(target);
-            rightBack.setPower(target);
+            leftFront.setPower(-result);
+            rightFront.setPower(-result);
+            leftBack.setPower(result);
+            rightBack.setPower(-result);
 
             telemetry.addData("Yaw", yaw);
-            telemetry.addData("Pitch", pitch);
-            telemetry.addData("Roll", roll);
+            telemetry.addData("result", result);
             telemetry.update();
         }
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
     }
 }
-
-
