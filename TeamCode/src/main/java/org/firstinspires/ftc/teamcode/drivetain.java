@@ -4,8 +4,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.Commands.Command;
 import org.firstinspires.ftc.teamcode.Subsystems.Shoot;
-;
+;import java.util.ArrayList;
+import java.util.List;
+
 @TeleOp
 public class drivetain extends LinearOpMode {
 
@@ -32,7 +35,6 @@ public class drivetain extends LinearOpMode {
         while (opModeIsActive()) {
 
             double drive = gamepad1.left_stick_y;
-
             double turn = gamepad1.right_stick_x;
 
             double leftPower = drive + turn;
@@ -69,6 +71,31 @@ public class drivetain extends LinearOpMode {
             telemetry.addData("Right Power", rightPower);
             telemetry.addData("Shooter Active", gamepad1.a);
             telemetry.update();
+        }
+    }
+
+    public static class Scheduler {
+
+        List<Command> commandList = new ArrayList<>();
+
+        public void add(Command command){
+            commandList.add(command);
+            command.start();
+        }
+
+        public void update(){
+            List<Command> removeList = new ArrayList<>();
+
+            for (Command command : commandList) {
+                if (command.isFinished()) {
+                    command.end();
+                    removeList.add(command);
+                } else {
+                    command.execute();
+                }
+            }
+
+            commandList.removeAll(removeList);
         }
     }
 }
