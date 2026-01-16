@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.CompVIsion;
+/*package org.firstinspires.ftc.teamcode.CompVIsion;
+import static java.lang.Math.abs;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -18,7 +20,7 @@ public class AprilTagFollowPIDS extends LinearOpMode {
     private double lastTx = 0;
     private final PID forwardPID = new PID(1, 0.0, 0.095);
     private final PID strafePID  = new PID(0.35, 0.0, 0.6);
-    private final PID turnPID    = new PID(0.025, 0.0, 0.030);
+    private final PID turnPID = new PID(0.025, 0.0, 0.030);
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -68,24 +70,23 @@ public class AprilTagFollowPIDS extends LinearOpMode {
                 double z = botpose.getPosition().z;
                 double tx = result.getTx();
 
+                if (abs(lastTx) <= 2.5){
+                    double strafePower =0;
+
+                }
+
                 double smoothTx = 0.3 * lastTx + 0.7 * tx;
                 lastTx = smoothTx;
 
                 double forwardPower = -forwardPID.updatePID(z);
-
                 double strafePower  = strafePID.updatePID(-x);
                 double turnPower    = turnPID.updatePID(smoothTx);
-
-                if (z < 0.4) {
-                    forwardPower *= 0.5;
-                    turnPower *= 0.5;
-                }
 
                 forwardPower = Math.max(-0.8, Math.min(0.8, forwardPower));
                 strafePower  = Math.max(-0.6, Math.min(0.6, strafePower));
                 turnPower    = Math.max(-0.5, Math.min(0.5, turnPower));
 
-                double denominator = Math.max(Math.abs(forwardPower) + Math.abs(strafePower) + Math.abs(turnPower), 1);
+                double denominator = Math.max(abs(forwardPower) + abs(strafePower) + abs(turnPower), 1);
                 double fl = (forwardPower + strafePower + turnPower) / denominator;
                 double bl = (forwardPower - strafePower + turnPower) / denominator;
                 double fr = (forwardPower - strafePower - turnPower) / denominator;
@@ -103,12 +104,12 @@ public class AprilTagFollowPIDS extends LinearOpMode {
                 telemetry.addData("TurnPID", "%.2f", turnPower);
 
             } else if (!autoMode) {
-                // Manual control
+
                 double y = gamepad1.left_stick_y;
                 double x = -gamepad1.left_stick_x * 1.1;
                 double rx = -gamepad1.right_stick_x;
 
-                double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+                double denominator = Math.max(abs(y) + abs(x) + abs(rx), 1);
                 double fl = (y + x + rx) / denominator;
                 double bl = (y - x + rx) / denominator;
                 double fr = (y - x - rx) / denominator;
@@ -119,11 +120,9 @@ public class AprilTagFollowPIDS extends LinearOpMode {
                 frontRightMotor.setPower(-fr);
                 backRightMotor.setPower(-br);
 
-
                 telemetry.addData("Mode", "MANUAL");
 
             } else {
-
                 frontLeftMotor.setPower(0);
                 backLeftMotor.setPower(0);
                 frontRightMotor.setPower(0);
@@ -162,3 +161,4 @@ public class AprilTagFollowPIDS extends LinearOpMode {
         limelight.stop();
     }
 }
+*/

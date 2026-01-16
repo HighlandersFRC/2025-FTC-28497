@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
-public class AutoDrive extends LinearOpMode {
+public class DriveAutoRed extends LinearOpMode {
 
     private DcMotor leftDrive;
     private DcMotor rightDrive;
@@ -17,6 +17,8 @@ public class AutoDrive extends LinearOpMode {
         leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
         rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
 
+        armMotor = hardwareMap.get(DcMotor.class,"shooter");
+
         rightDrive.setDirection(DcMotor.Direction.REVERSE);
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -25,7 +27,11 @@ public class AutoDrive extends LinearOpMode {
 
         forward(0.5, 1000);
         turn(0.5, 500);
-        forward(0.5, 700);
+        forward(0.7, 700);
+
+
+
+
     }
 
     private void forward(double power, long ms) {
@@ -47,5 +53,31 @@ public class AutoDrive extends LinearOpMode {
     }
 
 
+    private void shoot(){
+
+        armMotor.setPower(1);
+        sleep(2500);
+        armMotor.setPower(-1);
+        sleep(2500);
+        armMotor.setPower(1);
+        sleep(2500);
+        armMotor.setPower(1);
+        sleep(2500);
+        armMotor.setPower(-1);
+        sleep(2500);
+        armMotor.setPower(1);
+        sleep(2500);
+        armMotor.setPower(-1);
+        sleep(2500);
+        armMotor.setPower(1);
+        sleep(2500);
+        armMotor.setPower(0);
+
+
+
+
+
+
+    }
 
 }

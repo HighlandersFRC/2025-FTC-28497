@@ -27,7 +27,7 @@ public class ArmCommandDown implements Command {
     @Override
     public void end() {
         arm.stop();
-        sleep(50);
+
 
     }
 

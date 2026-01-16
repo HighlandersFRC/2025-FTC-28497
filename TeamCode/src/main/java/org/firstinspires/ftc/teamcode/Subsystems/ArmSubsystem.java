@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Tools.PID;
@@ -41,8 +40,6 @@ public class ArmSubsystem extends Subsystem {
         return armMotor.getCurrentPosition();
 
     }
-
-
     public double getTargetPos() {
         return this.currentTarget;
     }

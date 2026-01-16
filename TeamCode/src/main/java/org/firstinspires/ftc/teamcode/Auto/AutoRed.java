@@ -24,12 +24,13 @@ public class AutoRed extends LinearOpMode {
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
+        forward(0.5, 1000);
 
         shoot();
 
         forward(0.5, 1000);
         turn(-0.5, 500);
-        forward(0.7, 700);
+        forward(0.9, 900);
 
     }
 

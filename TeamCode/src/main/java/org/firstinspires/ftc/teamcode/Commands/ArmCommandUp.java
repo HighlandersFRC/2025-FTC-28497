@@ -27,8 +27,8 @@ public class ArmCommandUp implements Command {
     @Override
     public void end() {
         arm.stop();
-        arm.resetEncoders();
-        sleep(500);
+
+
     }
 
     @Override

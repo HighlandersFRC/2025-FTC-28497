@@ -2,100 +2,45 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Commands.Command;
-import org.firstinspires.ftc.teamcode.Subsystems.Shoot;
-;import java.util.ArrayList;
-import java.util.List;
+import org.firstinspires.ftc.teamcode.Commands.ArmCommandDown;
+import org.firstinspires.ftc.teamcode.Commands.ArmCommandUp;
+import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.Subsystems.ArmSubsystem;
+import org.firstinspires.ftc.teamcode.Tools.Drive;
 
 @TeleOp
 public class drivetain extends LinearOpMode {
 
-    private DcMotor leftDrive;
-    private DcMotor rightDrive;
-    private Shoot shooter;
+    private Drive drive;
+    private ArmSubsystem arm;
+    private CommandScheduler scheduler;
 
     @Override
     public void runOpMode() {
-        leftDrive = hardwareMap.get(DcMotor.class, "leftDrive");
-        rightDrive = hardwareMap.get(DcMotor.class, "rightDrive");
 
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        drive = new Drive("Drive", hardwareMap);
 
-        shooter = new Shoot(hardwareMap);
+        arm = new ArmSubsystem();
+        arm.initialize(hardwareMap);
 
-        telemetry.addLine("Arcade Drive + Shooter Ready");
-        telemetry.update();
+        scheduler = CommandScheduler.getInstance();
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            double drive = gamepad1.left_stick_y;
-            double turn = gamepad1.right_stick_x;
-
-            double leftPower = drive + turn;
-            double rightPower = drive - turn;
-
-            double max = Math.max(Math.abs(leftPower), Math.abs(rightPower));
-
-            if (max > 1.0) {
-
-                leftPower /= max;
-
-                rightPower /= max;
-
-            }
-
             if (gamepad1.a) {
-
-                shooter.throwBall(1.0);
-
-            } else if (gamepad1.b) {
-
-                shooter.throwBall(-1.0);
-
-            }
-            else{
-                shooter.throwBall(0.0
-                );
+                scheduler.schedule(new ArmCommandUp(arm));
             }
 
-            leftDrive.setPower(leftPower);
-            rightDrive.setPower(rightPower);
-
-            telemetry.addData("Left Power", leftPower);
-            telemetry.addData("Right Power", rightPower);
-            telemetry.addData("Shooter Active", gamepad1.a);
-            telemetry.update();
-        }
-    }
-
-    public static class Scheduler {
-
-        List<Command> commandList = new ArrayList<>();
-
-        public void add(Command command){
-            commandList.add(command);
-            command.start();
-        }
-
-        public void update(){
-            List<Command> removeList = new ArrayList<>();
-
-            for (Command command : commandList) {
-                if (command.isFinished()) {
-                    command.end();
-                    removeList.add(command);
-                } else {
-                    command.execute();
-                }
+            if (gamepad1.b) {
+                scheduler.schedule(new ArmCommandDown(arm));
             }
 
-            commandList.removeAll(removeList);
+            scheduler.run();
+
+            drive.teleopDrive(gamepad1);
         }
     }
 }

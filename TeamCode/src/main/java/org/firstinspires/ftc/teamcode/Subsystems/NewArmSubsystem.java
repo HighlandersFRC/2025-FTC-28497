@@ -4,26 +4,28 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Commands.ArmCommandDown;
-import org.firstinspires.ftc.teamcode.Commands.ArmCommandUp;
-import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-
+import org.firstinspires.ftc.teamcode.Tools.PID;
 public class NewArmSubsystem extends Subsystem {
 
     private ARM_STATE wantedSuperState = ARM_STATE.IDLE;
     private ARM_STATE currentSuperState = ARM_STATE.IDLE;
     private DcMotor ArmMotor;
-    private ArmSubsystem arm;
-    private CommandScheduler scheduler;
+    private PID armPID;
+    private double targetPOS = 1820;
 
     public NewArmSubsystem(String name) {
         super(name);
     }
 
-    public void init(HardwareMap hardwareMap) {
+    @Override
+    public void initialize(HardwareMap hardwareMap) {
         ArmMotor = hardwareMap.dcMotor.get("shooter");
         ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armPID = new PID(0.5,0,0);
+        armPID.setMaxOutput(1);
+        armPID.setMinOutput(-1);
     }
+
     public void setWantedState(ARM_STATE armState){
         wantedSuperState = armState;
     }
@@ -32,7 +34,7 @@ public class NewArmSubsystem extends Subsystem {
         DEFAULT,
         IDLE,
         ARM_UP,
-        Arm_Down
+        ARM_DOWN
     }
 
     private ARM_STATE handleStateTransitions() {
@@ -46,31 +48,38 @@ public class NewArmSubsystem extends Subsystem {
             case ARM_UP:
                 currentSuperState = ARM_STATE.ARM_UP;
                 break;
-            case Arm_Down:
-                currentSuperState = ARM_STATE.Arm_Down;
+            case ARM_DOWN:
+                currentSuperState = ARM_STATE.ARM_DOWN;
                 break;
         }
         return currentSuperState;
     }
 
     private void handleDefaultState() {
-        ArmMotor.setPower(0);
+        ArmMotor.setPower(0.1);
     }
 
     private void handleIdleState() {
-
-        ArmMotor.setPower(0.1);
-
+        ArmMotor.setPower(0);
     }
 
     private void handleArmUpState() {
-        scheduler.schedule(new ArmCommandUp(arm));
+       targetPOS = 0;
+       armPID.setSetPoint(targetPOS);
+       armPID.updatePID(ArmMotor.getCurrentPosition());
+       ArmMotor.setPower(armPID.getResult());
     }
 
     private void handleArmDownState() {
-        scheduler.schedule(new ArmCommandDown(arm));
+        targetPOS = 0;
+        armPID.setSetPoint(targetPOS);
+        armPID.updatePID(ArmMotor.getCurrentPosition());
+        ArmMotor.setPower(armPID.getResult());
     }
+public boolean isFinished() {
 
+        return Math.abs(targetPOS) - Math.abs(ArmMotor.getCurrentPosition()) <= 25;
+}
     @Override
     public void periodic() {
         handleStateTransitions();
@@ -84,23 +93,9 @@ public class NewArmSubsystem extends Subsystem {
             case ARM_UP:
                 handleArmUpState();
                 break;
-            case Arm_Down:
+            case ARM_DOWN:
                 handleArmDownState();
                 break;
         }
     }
-
-    @Override
-    public void initialize(HardwareMap hardwareMap) {
-
-    }
-
-    public NewArmSubsystem(ArmSubsystem arm, CommandScheduler scheduler) {
-        super("NewArmSubsystem");
-        this.arm = arm;
-        this.scheduler = scheduler;
-    }
-
-
-
 }

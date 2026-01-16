@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 @Autonomous
-public class Auto extends LinearOpMode {
+public class DriveAutoBlue extends LinearOpMode {
 
     private DcMotor leftDrive;
     private DcMotor rightDrive;
@@ -25,11 +25,8 @@ public class Auto extends LinearOpMode {
 
         waitForStart();
 
-        shoot();
+        forward(0.9, 600);
 
-        forward(0.5, 1000);
-        turn(0.5, 500);
-        forward(0.5, 700);
 
 
 
@@ -54,21 +51,25 @@ public class Auto extends LinearOpMode {
 
     }
 
+
     private void shoot(){
 
         armMotor.setPower(1);
-        sleep(4000);
+        sleep(2500);
         armMotor.setPower(-1);
-        sleep(4000);
+        sleep(2500);
         armMotor.setPower(1);
-        sleep(4000);
+        sleep(2500);
+        armMotor.setPower(1);
+        sleep(2500);
         armMotor.setPower(-1);
-        sleep(4000);
+        sleep(2500);
         armMotor.setPower(1);
+        sleep(2500);
         armMotor.setPower(-1);
-        sleep(4000);
+        sleep(2500);
         armMotor.setPower(1);
-        sleep(4000);
+        sleep(2500);
         armMotor.setPower(0);
 
 

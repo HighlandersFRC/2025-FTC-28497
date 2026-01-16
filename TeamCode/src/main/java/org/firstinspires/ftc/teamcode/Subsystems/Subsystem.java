@@ -1,26 +1,18 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
-import org.firstinspires.ftc.teamcode.Commands.Command;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public abstract class Subsystem {
-    private final String name;
-    private Command defaultCommand;
+    private String name;
 
-    public Subsystem() {
-        this.name = this.getClass().getSimpleName(); // use class name automatically
-    }
-
-    public void periodic() {}
-
-    public void setDefaultCommand(Command command) {
-        this.defaultCommand = command;
-    }
-
-    public Command getDefaultCommand() {
-        return defaultCommand;
+    public Subsystem(String name) {
+        this.name = name;
     }
 
     public String getName() {
         return name;
     }
+    public void periodic(){}
+
+    public abstract void initialize(HardwareMap hardwareMap);
 }
