@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.robotcontroller;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 @TeleOp
 public class soccerGuy extends LinearOpMode{
 
@@ -29,7 +29,6 @@ public class soccerGuy extends LinearOpMode{
 
             left.setPower(lp);
             right.setPower(rp);
-
 
         }
     }

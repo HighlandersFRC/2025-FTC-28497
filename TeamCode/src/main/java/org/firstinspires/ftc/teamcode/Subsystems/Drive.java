@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Tools.FinalPose;
 import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
 import org.firstinspires.ftc.teamcode.Tools.Vector;
-import org.firstinspires.ftc.teamcode.peripherals;
+import org.firstinspires.ftc.teamcode.Tools.peripherals;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

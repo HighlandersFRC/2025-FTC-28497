@@ -9,25 +9,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 @Autonomous
-public class rotatingGeorge extends LinearOpMode {
-    DcMotor leftFront;
-    DcMotor rightFront;
-    DcMotor leftBack;
-    DcMotor rightBack;
+public class rotatingRobot extends LinearOpMode {
+    DcMotor leftDrive;
+    DcMotor rightDrive;
     public IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        leftFront = hardwareMap.get(DcMotor.class, "leftFront");
-        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
-        leftBack = hardwareMap.get(DcMotor.class,"leftBack");
-        rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        leftDrive = hardwareMap.get(DcMotor.class, "left");
+        rightDrive = hardwareMap.get(DcMotor.class, "right");
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
-        PID drivePID = new PID(0.1,0,1);
+        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        PID drivePID = new PID(0.1,0.0001,0.001);
 
-        double target = -90;
+        double target = 170;
         drivePID.setSetPoint(target);
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -46,18 +41,14 @@ public class rotatingGeorge extends LinearOpMode {
             double error = target - yaw;
             double result = drivePID.updatePID(yaw);
 
-            leftFront.setPower(result);
-            rightFront.setPower(result);
-            leftBack.setPower(-result);
-            rightBack.setPower(result);
+            leftDrive.setPower(result);
+            rightDrive.setPower(result);
 
             telemetry.addData("Yaw", yaw);
             telemetry.addData("result", result);
             telemetry.update();
         }
-        leftFront.setPower(0);
-        rightFront.setPower(0);
-        leftBack.setPower(0);
-        rightBack.setPower(0);
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
     }
 }

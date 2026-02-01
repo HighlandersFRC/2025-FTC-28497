@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -6,9 +6,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.limelightvision.LLResult;
 
-import org.firstinspires.ftc.robotcontroller.Subsystem;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Tools.Mouse;
+import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class peripherals extends Subsystem {
 
@@ -23,6 +22,7 @@ public class peripherals extends Subsystem {
 
     public peripherals(String name) {
         super();
+
     }
 
     public static void initialize(HardwareMap hardwareMap) {

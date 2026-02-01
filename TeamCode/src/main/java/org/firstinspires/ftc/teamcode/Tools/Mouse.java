@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Tools;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcontroller.SparkFunOTOS;
 public class Mouse {
     private static double fieldX;
     private static double fieldY;
