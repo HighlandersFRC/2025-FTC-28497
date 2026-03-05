@@ -199,7 +199,7 @@ public class Drive extends Subsystem {
 
 
 
-    public void FeildCentric(Gamepad gamepad) {
+    public void FieldCentric(Gamepad gamepad) {
 
 
 
@@ -463,10 +463,6 @@ public class Drive extends Subsystem {
         stop();
         drive(0,0,0,0);
     }
-
-
-
-
     public double leftFrontPos(){
         return frontLeftMotor.getCurrentPosition();
     }

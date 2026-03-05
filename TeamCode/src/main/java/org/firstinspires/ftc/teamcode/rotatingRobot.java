@@ -22,7 +22,7 @@ public class rotatingRobot extends LinearOpMode {
         leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         PID drivePID = new PID(0.1,0.0001,0.001);
 
-        double target = 170;
+        double target = 90;
         drivePID.setSetPoint(target);
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -42,7 +42,7 @@ public class rotatingRobot extends LinearOpMode {
             double result = drivePID.updatePID(yaw);
 
             leftDrive.setPower(result);
-            rightDrive.setPower(result);
+            rightDrive.setPower(-result);
 
             telemetry.addData("Yaw", yaw);
             telemetry.addData("result", result);
