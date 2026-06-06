@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.Tools.Mouse;
 
 public class ARM extends Subsystem{
     public DcMotor arm;
-    public double target = 0;
+    public double target = 1820;
 
     public void initialize(HardwareMap hardwareMap) {
         arm = hardwareMap.get(DcMotor.class, "shooter");
@@ -26,7 +26,8 @@ public class ARM extends Subsystem{
     }
 
     private void handleArmUp() {
-        
+        arm.setPower(target);
+
 
     }
 
