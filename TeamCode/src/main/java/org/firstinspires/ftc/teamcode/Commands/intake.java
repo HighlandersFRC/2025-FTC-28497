@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Subsystems.ARM;
@@ -10,9 +12,17 @@ public class intake implements Command{
     double time;
     double power;
     DcMotor intake;
+    DcMotor frontLeft;
+    DcMotor backRight;
+    DcMotor backLeft;
+
     public intake (double power, double time) {
         this.time = time;
         this.power = power;
+        DcMotor frontleft = hardwareMap.dcMotor.get("left_front");
+        DcMotor frontright = hardwareMap.dcMotor.get("right_front");
+        DcMotor backleft = hardwareMap.dcMotor.get("left_back");
+        DcMotor backright = hardwareMap.dcMotor.get("right_back");
     }
     @Override
     public void start() {

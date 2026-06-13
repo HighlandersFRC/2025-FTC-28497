@@ -18,9 +18,6 @@ public class fieldCentric extends LinearOpMode{
         DcMotor backleft = hardwareMap.dcMotor.get("left_back");
         DcMotor backright = hardwareMap.dcMotor.get("right_back");
 
-
-        backleft.setDirection(DcMotorSimple.Direction.REVERSE);
-
         Mouse.init(hardwareMap);
 
         waitForStart();
@@ -38,7 +35,7 @@ public class fieldCentric extends LinearOpMode{
             }
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-            double frontLeftPower = (-rotY + rotX + rx);
+            double frontLeftPower = (rotY - rotX + rx);
             double backLeftPower = (rotY + rotX - rx);
             double frontRightPower = (rotY + rotX + rx);
             double backRightPower = (rotY - rotX + rx);
