@@ -14,9 +14,6 @@ public class mecanumDrive extends LinearOpMode{
         DcMotor backleft = hardwareMap.dcMotor.get("left_back");
         DcMotor backright = hardwareMap.dcMotor.get("right_back");
 
-
-
-
         waitForStart();
 
         if(isStopRequested()) return;
@@ -26,20 +23,17 @@ public class mecanumDrive extends LinearOpMode{
             double x = gamepad1.left_stick_x*1.1;
             double rx = -gamepad1.right_stick_x;
 
-
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx) , 1);
 
-            double flp = (y-x-rx)/denominator;
-            double blp = (y-x+rx)/denominator;
+            double flp = (-y+x-rx)/denominator;
+            double blp = (-y+x+rx)/denominator;
             double frp = (y+x-rx)/denominator;
-            double brp = (y+x-rx)/denominator;
+            double brp = (-y-x-rx)/denominator;
 
             frontleft.setPower(flp);
             frontright.setPower(frp);
             backleft.setPower(blp);
             backright.setPower(brp);
-
-
         }
     }
 }
