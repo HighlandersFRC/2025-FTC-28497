@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.Commands.intake;
 @TeleOp
 public class robot extends LinearOpMode {
-     CommandScheduler scheduler = new CommandScheduler();
+     //CommandScheduler scheduler = new CommandScheduler();
  @Override
  public void runOpMode() throws InterruptedException {
      DcMotor frontleft = hardwareMap.dcMotor.get("left_front");
