@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Subsystems.ARM;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 public class intake implements Command{

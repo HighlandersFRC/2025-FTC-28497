@@ -10,45 +10,19 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 @Autonomous
 public class rotatingRobot extends LinearOpMode {
-    DcMotor leftDrive;
-    DcMotor rightDrive;
+    DcMotor leftFront = hardwareMap.get(DcMotor.class, "left_front");
+    DcMotor rightFront = hardwareMap.get(DcMotor.class, "right_front");
+    DcMotor leftBack = hardwareMap.get(DcMotor.class,"left_back");
+    DcMotor rightBack = hardwareMap.get(DcMotor.class, "right_back");
     public IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        leftDrive = hardwareMap.get(DcMotor.class, "left");
-        rightDrive = hardwareMap.get(DcMotor.class, "right");
 
-        leftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        PID drivePID = new PID(0.1,0.0001,0.001);
-
-        double target = 90;
-        drivePID.setSetPoint(target);
-
-        imu = hardwareMap.get(IMU.class, "imu");
-
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
 
         waitForStart();
         while (opModeIsActive()) {
 
-            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            double error = target - yaw;
-            double result = drivePID.updatePID(yaw);
-
-            leftDrive.setPower(result);
-            rightDrive.setPower(-result);
-
-            telemetry.addData("Yaw", yaw);
-            telemetry.addData("result", result);
-            telemetry.update();
         }
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
     }
 }
