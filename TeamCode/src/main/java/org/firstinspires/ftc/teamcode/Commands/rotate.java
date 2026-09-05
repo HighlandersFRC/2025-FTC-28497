@@ -14,16 +14,20 @@ public class rotate implements Command {
     DcMotor rightBack;
     public IMU imu;
     double target;
+    double yaw;
     PID drivePID = new PID(0.02,0.0001,0.002);
+    double result;
     public rotate(double target) {
         this.target = target;
         drivePID.setSetPoint(target);
+        this.yaw = yaw;
     }
 
     @Override
     public void start() {
-        double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        double result = drivePID.updatePID(yaw);
+
+        yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+        double error = target - yaw;
         leftFront.setPower(result);
         rightFront.setPower(-result);
         leftBack.setPower(-result);
@@ -32,7 +36,7 @@ public class rotate implements Command {
 
     @Override
     public void execute() {
-
+         this.result = drivePID.updatePID(yaw);
     }
 
     @Override
@@ -44,7 +48,7 @@ public class rotate implements Command {
     }
     @Override
     public boolean isFinished() {
-        if (target > 0) {
+        if (yaw >= 90) {
             return true;
         } else {
             return false;
