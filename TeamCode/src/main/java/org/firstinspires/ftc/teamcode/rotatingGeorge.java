@@ -20,7 +20,8 @@ public class rotatingGeorge extends LinearOpMode {
     DcMotor leftBack;
     DcMotor rightBack;
     public IMU imu;
-    //public SparkFunOTOS mouse;
+    double heading;
+    public SparkFunOTOS mouse;
     CommandScheduler scheduler = new CommandScheduler();
 
     @Override
@@ -29,33 +30,30 @@ public class rotatingGeorge extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "right_front");
         leftBack = hardwareMap.get(DcMotor.class, "left_back");
         rightBack = hardwareMap.get(DcMotor.class, "right_back");
-        imu = hardwareMap.get(IMU.class, "imu");
+        //imu = hardwareMap.get(IMU.class, "imu");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         PID drivePID = new PID(0.02, 0.0001, 0.002);
 
-        double target = 92;
+        double target = 91;
         drivePID.setSetPoint(target);
-        //mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+        mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
         waitForStart();
-        imu.resetYaw();
+        mouse.resetTracking();
         while (opModeIsActive()) {
-
-            double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-            double error = target - yaw;
-            double result = drivePID.updatePID(yaw);
+            heading = mouse.getPosition().h;
+           // double yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+            double error = target - heading;
+            double result = drivePID.updatePID(heading);
 
             if (gamepad1.a) {
 
-                //double heading = mouse.getPosition().h;
-                //mouse.resetTracking();
 
                 leftFront.setPower(result);
                 rightFront.setPower(-result);
@@ -67,19 +65,19 @@ public class rotatingGeorge extends LinearOpMode {
                 leftBack.setPower(0);
                 rightBack.setPower(0);
 
-                telemetry.addData("Yaw", yaw);
+                telemetry.addData("yaw", heading);
                 telemetry.addData("result", result);
                 telemetry.addData("error", error);
                 telemetry.update();
             }
             if (gamepad1.right_bumper) {
-                imu.resetYaw();
+                mouse.resetTracking();
             }
             if (gamepad1.b) {
                 target = -90;
                 drivePID.setSetPoint(target);
-                error = target - yaw;
-                result = drivePID.updatePID(yaw);
+                error = target - heading;
+                result = drivePID.updatePID(heading);
 
                 leftFront.setPower(result);
                 rightFront.setPower(-result);
@@ -87,7 +85,7 @@ public class rotatingGeorge extends LinearOpMode {
                 rightBack.setPower(-result);
 
                 telemetry.update();
-                telemetry.addData("Yaw", yaw);
+                telemetry.addData("yaw", heading);
                 telemetry.addData("result", result);
                 telemetry.addData("error", error);
                 telemetry.update();
@@ -99,9 +97,15 @@ public class rotatingGeorge extends LinearOpMode {
             }
             if (gamepad1.x) {
                 scheduler.schedule(new rotate(90));
+
+                mouse = hardwareMap.get(SparkFunOTOS.class, "mouse");
+                leftFront = hardwareMap.get(DcMotor.class, "left_front");
+                rightFront = hardwareMap.get(DcMotor.class, "right_front");
+                leftBack = hardwareMap.get(DcMotor.class, "left_back");
+                rightBack = hardwareMap.get(DcMotor.class, "right_back");
+
                 scheduler.run();
             }
         }
     }
 }
-//

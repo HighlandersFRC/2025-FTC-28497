@@ -1,33 +1,36 @@
 package org.firstinspires.ftc.teamcode.Commands;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.Tools.Mouse;
 import org.firstinspires.ftc.teamcode.Tools.PID;
+import org.firstinspires.ftc.teamcode.Tools.SparkFunOTOS;
 
 public class rotate implements Command {
     DcMotor leftFront;
     DcMotor rightFront;
     DcMotor leftBack;
     DcMotor rightBack;
-    public IMU imu;
+    public SparkFunOTOS mouse;
     double target;
-    double yaw;
+    double heading;
     PID drivePID = new PID(0.02,0.0001,0.002);
     double result;
     public rotate(double target) {
         this.target = target;
         drivePID.setSetPoint(target);
-        this.yaw = yaw;
+        this.heading = heading;
     }
 
     @Override
     public void start() {
-
-        yaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
-        double error = target - yaw;
+        heading = mouse.getPosition().h;
+        double error = target - heading;
         leftFront.setPower(result);
         rightFront.setPower(-result);
         leftBack.setPower(-result);
@@ -36,7 +39,7 @@ public class rotate implements Command {
 
     @Override
     public void execute() {
-         this.result = drivePID.updatePID(yaw);
+         this.result = drivePID.updatePID(heading);
     }
 
     @Override
@@ -48,7 +51,7 @@ public class rotate implements Command {
     }
     @Override
     public boolean isFinished() {
-        if (yaw >= 90) {
+        if (heading >= 90) {
             return true;
         } else {
             return false;
@@ -60,4 +63,3 @@ public class rotate implements Command {
         return null;
     }
 }
-//

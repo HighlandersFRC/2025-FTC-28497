@@ -5,10 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Commands.CommandScheduler;
-import org.firstinspires.ftc.teamcode.Commands.intake;
 @TeleOp
 public class robot extends LinearOpMode {
-    CommandScheduler scheduler = new CommandScheduler();
     @Override
     public void runOpMode() throws InterruptedException {
         DcMotor frontleft = hardwareMap.dcMotor.get("left_front");
@@ -21,11 +19,6 @@ public class robot extends LinearOpMode {
         DcMotor shooter = hardwareMap.dcMotor.get("ShooterMotor");
         waitForStart();
         while (opModeIsActive()) {
-
-//            scheduler.schedule(
-//                    new intake(1,10)
-//            );
-//            scheduler.run();
 
             double y = gamepad1.left_stick_y;
             double rx = -gamepad1.left_stick_x * 1.1;
